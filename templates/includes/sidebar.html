@@ -1,0 +1,10 @@
+<div class="d-flex">
+  <ul class="list-group" style="width: 80px;">
+    <li class="list-group-item"><a href="{% url 'todo_list:task-list' %}">Home</a></li>
+    <li class="list-group-item"><a href="{% url 'todo_list:tag-list' %}">Tags</a></li>
+  </ul>
+
+  <div class="flex-grow-1 p-3">
+    {% block content %}{% endblock %}
+  </div>
+</div>

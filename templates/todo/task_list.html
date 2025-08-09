@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<a href="{% url 'todo_list:task-create' %}" class="add-task-btn">Add task</a>
+<table class="table-full">
+  <thead>
+  <tr class="table-header-row">
+    <th class="text-left cell-padding">Task</th>
+    <th class="text-left cell-padding">Created</th>
+    <th class="text-left cell-padding">Tags</th>
+    <th class="text-center cell-padding">Actions</th>
+  </tr>
+  </thead>
+  <tbody>
+  {% for task in object_list %}
+    <tr class="table-row">
+      <td class="cell-padding">
+        <strong>{{ task.content }}</strong>
+        {% if task.is_complete %}
+          <span class="status-done">Done</span>
+        {% else %}
+          <span class="status-notdone">Not done</span>
+        {% endif %}
+      </td>
+      <td class="cell-padding">
+        {{ task.datetime|date:"F j, Y, g:i a" }}
+        {% if task.deadline %}
+          <br>
+          <span class="deadline-color">Deadline: {{ task.deadline|date:"F j, Y, g:i a" }}</span>
+        {% endif %}
+      </td>
+      <td class="cell-padding tag-color">
+        Tags:
+        {% for tag in task.tags.all %}
+          {{ tag.name }}{% if not forloop.last %}, {% endif %}
+        {% empty %}
+          No tags
+        {% endfor %}
+        <br>
+        <a href="{% url 'todo_list:task-update' task.pk %}">Update</a> |
+        <a href="{% url 'todo_list:task-delete' task.pk %}">Delete</a>
+      </td>
+      <td class="cell-padding text-center">
+        {% if task.is_complete %}
+          <form action="{% url 'todo_list:task-status' task.pk %}" method="post" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="action-btn action-btn-undo">Undo</button>
+          </form>
+        {% else %}
+          <form action="{% url 'todo_list:task-status' task.pk %}" method="post" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="action-btn action-btn-complete">Complete</button>
+          </form>
+        {% endif %}
+      </td>
+    </tr>
+  {% empty %}
+    <tr>
+      <td colspan="4" class="cell-padding" style="text-align: center;">No tasks found.</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
